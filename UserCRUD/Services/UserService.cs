@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using UserCRUD.Common;
-using UserCRUD.DTOs;
+using UserCRUD.DTOs.Request;
+using UserCRUD.DTOs.Response;
 using UserCRUD.Models;
 using UserCRUD.Repository.Interface;
 using UserCRUD.Services.Interfaces;
@@ -17,11 +18,11 @@ namespace UserCRUD.Services
             _userRepository = userRepository;
             _encryptionPasswordService = encryptionPasswordService;
         }
-        public async Task<Result<User>> Create(UserDTO userDTO)
+        public async Task<Result<User>> Create(UserRequestDTO userDTO)
         {
             var user = await _userRepository.GetByEmail(userDTO.Email);
             if (user != null)
-                return Result<User>.Failure("User already exist", ErrorCode.USER_ALREADY_EXISTS);
+                return Result<User>.Failure("Username or password is incorrect", ErrorCode.USER_ALREADY_EXISTS);
 
             var newUser = new User
             {
@@ -41,6 +42,22 @@ namespace UserCRUD.Services
                 // CRIAR SERVIÇO DE LOG
                 return Result<User>.Failure("An error occurred while creating the user.", ErrorCode.DATABASE_ERROR);
             }
+        }
+
+        public async Task<Result<string>> Login(LoginRequestDTO loginDTO)
+        {
+            var user = await _userRepository.GetByEmail(loginDTO.Email);
+            var loginValid = _encryptionPasswordService.ValidatePassword(loginDTO.Password, user.Password);
+
+            if (!loginValid)
+                return Result<string>.Failure("Invalid email or password.", ErrorCode.INVALID_CREDENTIALS);
+
+            // gerar o token JWT
+            // var jwt = _jwtService.GenerateToken(user);
+            string jwt = "fake-jwt";
+
+            return Result<string>.Success(jwt);
+
         }
     }
 }

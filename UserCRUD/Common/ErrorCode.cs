@@ -11,6 +11,7 @@
         INVALID_EMAIL,
         USER_NOT_FOUND,
         INACTIVE_USER,
+        INVALID_CREDENTIALS,
 
         // Erros de infraestrutura/inesperados (500)
         DATABASE_ERROR,

@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using UserCRUD.Common;
 using UserCRUD.DTOs;
+using UserCRUD.DTOs.Request;
+using UserCRUD.DTOs.Response;
 using UserCRUD.Models;
 using UserCRUD.Services.Interfaces;
 
@@ -18,7 +20,7 @@ namespace UserCRUD.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateUser([FromBody] UserDTO userDTO)
+        public async Task<IActionResult> CreateUser([FromBody] UserRequestDTO userDTO)
         {
             ResponseDTO response = new ResponseDTO();
 
@@ -39,11 +41,33 @@ namespace UserCRUD.Controllers
                 return StatusCode(statusCode, response);
             }
 
-            UserDTO reponseUser = new UserDTO(result.Data);
+            UserResponseDTO reponseUser = new UserResponseDTO(result.Data);
 
             response.IsSucess("User created successfully.", StatusCodes.Status201Created.ToString(), reponseUser);
 
             return StatusCode(StatusCodes.Status201Created, response);
+        }
+
+        [HttpPost]
+        [Route("login")]
+        public async Task<IActionResult> Login([FromBody] LoginRequestDTO loginDTO)
+        {
+            ResponseDTO response = new ResponseDTO();
+            if (!ModelState.IsValid)
+            {
+                response.IsFailure("Invalid login data.", StatusCodes.Status400BadRequest.ToString(), ModelState);
+                return StatusCode(StatusCodes.Status400BadRequest, response);
+            }
+            Result<string> result = await _userService.Login(loginDTO);
+            if (!result.IsSuccess)
+            {
+                int statusCode = MapErrorToStatusCode(result.ErrorCode);
+                response.IsFailure(result.ErrorMessage, statusCode.ToString(), loginDTO);
+                return StatusCode(statusCode, response);
+            }
+            LoginResponseDTO loginResponse = new LoginResponseDTO(result.Data);
+            response.IsSucess("Login successful.", StatusCodes.Status200OK.ToString(), loginResponse);
+            return StatusCode(StatusCodes.Status200OK, response);
         }
 
         private int MapErrorToStatusCode(ErrorCode errorCode)
@@ -53,6 +77,7 @@ namespace UserCRUD.Controllers
                 ErrorCode.USER_ALREADY_EXISTS => StatusCodes.Status409Conflict,
                 ErrorCode.INVALID_EMAIL => StatusCodes.Status422UnprocessableEntity,
                 ErrorCode.USER_NOT_FOUND => StatusCodes.Status404NotFound,
+                ErrorCode.INVALID_CREDENTIALS => StatusCodes.Status401Unauthorized,
                 ErrorCode.DATABASE_ERROR or ErrorCode.EXTERNAL_SERVICE_UNAVAILABLE => StatusCodes.Status503ServiceUnavailable,
                 _ => StatusCodes.Status400BadRequest // padrao para outros erros
             };

@@ -3,6 +3,6 @@
     public interface IEncryptionPasswordService
     {
         public string EncryptPassword(string openPassword);
-        public bool ValidatePassword(string encryptedPassword, string openPassword);
+        public bool ValidatePassword(string openPassword, string encryptedPassword);
     }
 }

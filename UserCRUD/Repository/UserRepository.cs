@@ -31,5 +31,11 @@ namespace UserCRUD.Repository
             return await _context.Users
                 .FirstOrDefaultAsync(u => u.Email == email);
         }
+
+        public async Task<User> GetByEmailAndPassword(string email, string password)
+        {
+            return await _context.Users
+                .FirstOrDefaultAsync(u => u.Email == email && u.Password == password);
+        }
     }
 }

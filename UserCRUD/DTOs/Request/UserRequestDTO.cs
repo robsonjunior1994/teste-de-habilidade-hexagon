@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using UserCRUD.Models;
 
-namespace UserCRUD.DTOs
+namespace UserCRUD.DTOs.Request
 {
-    public class UserDTO
+    public class UserRequestDTO
     {
         public int Id { get; set; }
         [Required]
@@ -17,9 +17,9 @@ namespace UserCRUD.DTOs
         [StringLength(100, MinimumLength = 6)]
         public string Password { get; set; }
 
-        public UserDTO() { }
+        public UserRequestDTO() { }
 
-        public UserDTO(User user)
+        public UserRequestDTO(User user)
         {
             Id = user.Id;
             Name = user.Name;
