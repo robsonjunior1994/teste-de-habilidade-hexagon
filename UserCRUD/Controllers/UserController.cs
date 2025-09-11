@@ -1,10 +1,13 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using UserCRUD.Common;
 using UserCRUD.DTOs;
 using UserCRUD.DTOs.Request;
 using UserCRUD.DTOs.Response;
 using UserCRUD.Models;
+using UserCRUD.Services;
 using UserCRUD.Services.Interfaces;
 
 namespace UserCRUD.Controllers
@@ -14,9 +17,12 @@ namespace UserCRUD.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
-        public UserController(IUserService userService)
+        private readonly IJwtService _jwtService;
+        public UserController(IUserService userService, 
+            IJwtService jwtService)
         {
             _userService = userService;
+            _jwtService = jwtService;
         }
 
         [HttpPost]
@@ -62,12 +68,28 @@ namespace UserCRUD.Controllers
             if (!result.IsSuccess)
             {
                 int statusCode = MapErrorToStatusCode(result.ErrorCode);
-                response.IsFailure(result.ErrorMessage, statusCode.ToString(), loginDTO);
+                response.IsFailure(result.ErrorMessage, statusCode.ToString(), result.Data);
                 return StatusCode(statusCode, response);
             }
             LoginResponseDTO loginResponse = new LoginResponseDTO(result.Data);
             response.IsSucess("Login successful.", StatusCodes.Status200OK.ToString(), loginResponse);
             return StatusCode(StatusCodes.Status200OK, response);
+        }
+
+        [HttpGet("profile")]
+        [Authorize] 
+        public IActionResult GetProfile()
+        {
+            var userId = _jwtService.GetUserIdFromToken(Request.Headers["Authorization"].ToString().Replace("Bearer ", ""));
+            var userEmail = _jwtService.GetUserEmailFromToken(Request.Headers["Authorization"].ToString().Replace("Bearer ", ""));
+            var userName = _jwtService.GetUserNameFromToken(Request.Headers["Authorization"].ToString().Replace("Bearer ", ""));
+
+            return Ok(new
+            {
+                UserId = userId,
+                Email = userEmail,
+                Name = userName
+            });
         }
 
         private int MapErrorToStatusCode(ErrorCode errorCode)

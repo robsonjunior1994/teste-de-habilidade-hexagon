@@ -6,6 +6,5 @@ namespace UserCRUD.Repository.Interface
     {
         public Task Create(User user);
         public Task<User> GetByEmail(string email);
-        public Task<User> GetByEmailAndPassword(string email, string password);
     }
 }

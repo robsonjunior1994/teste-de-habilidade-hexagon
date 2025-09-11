@@ -12,11 +12,14 @@ namespace UserCRUD.Services
     {
         private readonly IUserRepository _userRepository;
         private readonly IEncryptionPasswordService _encryptionPasswordService;
+        private readonly IJwtService _jwtService;
         public UserService(IUserRepository userRepository,
-            IEncryptionPasswordService encryptionPasswordService)
+            IEncryptionPasswordService encryptionPasswordService,
+            IJwtService jwtService)
         {
             _userRepository = userRepository;
             _encryptionPasswordService = encryptionPasswordService;
+            _jwtService = jwtService;
         }
         public async Task<Result<User>> Create(UserRequestDTO userDTO)
         {
@@ -52,9 +55,7 @@ namespace UserCRUD.Services
             if (!loginValid)
                 return Result<string>.Failure("Invalid email or password.", ErrorCode.INVALID_CREDENTIALS);
 
-            // gerar o token JWT
-            // var jwt = _jwtService.GenerateToken(user);
-            string jwt = "fake-jwt";
+            string jwt = _jwtService.GenerateToken(user);
 
             return Result<string>.Success(jwt);
 
