@@ -24,7 +24,7 @@ namespace UserCRUD.Services
             if (customer != null)
             {
                 return Result<Customer>.Failure("Customer already registered", ErrorCode.RESOURCE_ALREADY_EXISTS);
-            }            
+            }
 
             var newCustomer = new Customer
             {
@@ -46,6 +46,83 @@ namespace UserCRUD.Services
             {
                 // CRIAR SERVIÇO DE LOG
                 return Result<Customer>.Failure("An error occurred while creating the customer.", ErrorCode.DATABASE_ERROR);
+            }
+        }
+
+        public async Task<Result<List<Customer>>> GetAll(int id)
+        {
+            try
+            {
+                var customers = await _customerRepository.GetAll(id);
+                return Result<List<Customer>>.Success(customers);
+            }
+            catch (Exception ex)
+            {
+                // CRIAR SERVIÇO DE LOG
+                return Result<List<Customer>>.Failure("An error occurred while retrieving customers.", ErrorCode.DATABASE_ERROR);
+            }
+        }
+
+        public async Task<Result<Customer>> GetForId(int userId, int customerId)
+        {
+            try
+            {
+                var customer = await _customerRepository.GetForId(userId, customerId);
+                if (customer == null)
+                {
+                    return Result<Customer>.Failure("Customer not found.", ErrorCode.RESOURCE_NOT_FOUND);
+                }
+                return Result<Customer>.Success(customer);
+            }
+            catch (Exception ex)
+            {
+                // CRIAR SERVIÇO DE LOG
+                return Result<Customer>.Failure("An error occurred while retrieving the customer.", ErrorCode.DATABASE_ERROR);
+            }
+        }
+
+        public async Task<Result<Customer>> DeleteForId(int userId, int customerId)
+        {
+            try
+            {
+                var customer = await _customerRepository.GetForId(userId, customerId);
+                if (customer == null)
+                {
+                    return Result<Customer>.Failure("Customer not found.", ErrorCode.RESOURCE_NOT_FOUND);
+                }
+                await _customerRepository.Delete(customer);
+                return Result<Customer>.Success(customer);
+            }
+            catch (Exception ex)
+            {
+                // CRIAR SERVIÇO DE LOG
+                return Result<Customer>.Failure("An error occurred while deleting the customer.", ErrorCode.DATABASE_ERROR);
+            }
+        }
+        public async Task<Result<Customer>> Update(int userId, int customerId, CustomerRequestDTO customerForUpdate)
+        {
+            try
+            {
+                var customer = await _customerRepository.GetForId(userId, customerId);
+                if (customer == null)
+                {
+                    return Result<Customer>.Failure("Customer not found.", ErrorCode.RESOURCE_NOT_FOUND);
+                }
+
+                customer.Name = customerForUpdate.Name;
+                customer.Age = customerForUpdate.Age;
+                customer.CivilState = customerForUpdate.CivilState;
+                customer.Cpf = customerForUpdate.Cpf;
+                customer.City = customerForUpdate.City;
+                customer.State = customerForUpdate.State;
+
+                await _customerRepository.Update(customer);
+                return Result<Customer>.Success(customer);
+            }
+            catch (Exception ex)
+            {
+                // CRIAR SERVIÇO DE LOG
+                return Result<Customer>.Failure("An error occurred while updating the customer.", ErrorCode.DATABASE_ERROR);
             }
         }
     }

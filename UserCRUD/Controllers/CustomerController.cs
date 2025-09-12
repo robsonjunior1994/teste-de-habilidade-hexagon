@@ -52,5 +52,79 @@ namespace UserCRUD.Controllers
 
             return StatusCode(StatusCodes.Status201Created, response);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
+        {
+            ResponseDTO response = new ResponseDTO();
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            Result<List<Customer>> result = await _customerService.GetAll(Int32.Parse(userId));
+
+            if (!result.IsSuccess)
+            {
+                int statusCode = MapError.MapErrorToStatusCode(result.ErrorCode);
+                response.IsFailure(result.ErrorMessage, statusCode.ToString(), result.Data);
+                return StatusCode(statusCode, response);
+            }
+
+            List<CustomerResponseDTO> reponseCustomers = result.Data.Select(c => new CustomerResponseDTO(c)).ToList();
+            response.IsSucess("Customers retrieved successfully.", StatusCodes.Status200OK.ToString(), reponseCustomers);
+            return StatusCode(StatusCodes.Status200OK, response);
+        }
+
+        [HttpGet("{customerId}")]
+        public async Task<IActionResult> GetForId([FromRoute]int customerId)
+        {
+            ResponseDTO response = new ResponseDTO();
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            Result<Customer> result = await _customerService.GetForId(Int32.Parse(userId), customerId);
+
+            if (!result.IsSuccess)
+            {
+                int statusCode = MapError.MapErrorToStatusCode(result.ErrorCode);
+                response.IsFailure(result.ErrorMessage, statusCode.ToString(), result.Data);
+                return StatusCode(statusCode, response);
+            }
+
+            CustomerResponseDTO reponseCustomer = new CustomerResponseDTO(result.Data);
+            response.IsSucess("Customer retrieved successfully.", StatusCodes.Status200OK.ToString(), reponseCustomer);
+            return StatusCode(StatusCodes.Status200OK, response);
+        }
+
+        [HttpDelete("{customerId}")]
+        public async Task<IActionResult> Delete([FromRoute]int customerId)
+        {
+            ResponseDTO response = new ResponseDTO();
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            Result<Customer> result = await _customerService.DeleteForId(Int32.Parse(userId), customerId);
+
+            if (!result.IsSuccess)
+            {
+                int statusCode = MapError.MapErrorToStatusCode(result.ErrorCode);
+                response.IsFailure(result.ErrorMessage, statusCode.ToString(), result.Data);
+                return StatusCode(statusCode, response);
+            }
+            CustomerResponseDTO reponseCustomer = new CustomerResponseDTO(result.Data);
+            response.IsSucess("Customer deleted successfully.", StatusCodes.Status200OK.ToString(), reponseCustomer);
+            return StatusCode(StatusCodes.Status200OK, response);
+        }
+
+        [HttpPut("{customerId}")]
+        public async Task<IActionResult> Put([FromRoute] int customerId, [FromBody] CustomerRequestDTO customerForUpdate)
+        {
+            ResponseDTO response = new ResponseDTO();
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            Result<Customer> result = await _customerService.Update(Int32.Parse(userId), customerId, customerForUpdate);
+
+            if (!result.IsSuccess)
+            {
+                int statusCode = MapError.MapErrorToStatusCode(result.ErrorCode);
+                response.IsFailure(result.ErrorMessage, statusCode.ToString(), result.Data);
+                return StatusCode(statusCode, response);
+            }
+            CustomerResponseDTO reponseCustomer = new CustomerResponseDTO(result.Data);
+            response.IsSucess("Customer update successfully.", StatusCodes.Status200OK.ToString(), reponseCustomer);
+            return StatusCode(StatusCodes.Status200OK, response);
+        }
     }
 }

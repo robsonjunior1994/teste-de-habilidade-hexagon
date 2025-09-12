@@ -39,5 +39,62 @@ namespace UserCRUD.Repository
                 throw;
             }
         }
+
+        public async Task<List<Customer>> GetAll(int userId)
+        {
+            try
+            {
+                return await _context.Customers
+                    .Where(c => c.User.Id == userId)
+                    .ToListAsync();
+            }
+            catch
+            {
+                // Log do erro aqui
+                throw;
+            }
+        }
+
+        public async Task<Customer> GetForId(int userId, int customerId)
+        {
+            try
+            {
+                var customer = await _context.Customers
+                    .FirstOrDefaultAsync(c => c.Id == customerId && c.User.Id == userId);
+
+                return customer;
+            }
+            catch
+            {
+                // Log do erro aqui
+                throw;
+            }
+        }
+        public async Task Delete(Customer customer)
+        {
+            try
+            {
+                _context.Customers.Remove(customer);
+                await _context.SaveChangesAsync();
+            }
+            catch
+            {
+                // Log do erro aqui
+                throw;
+            }
+        }
+        public async Task Update(Customer customer)
+        {
+            try
+            {
+                _context.Customers.Update(customer);
+                await _context.SaveChangesAsync();
+            }
+            catch
+            {
+                // Log do erro aqui
+                throw;
+            }
+        }
     }
 }
