@@ -26,6 +26,6 @@ FLUSH PRIVILEGES;
 
 **Para rodar a migração inicial:**
 
-dotnet ef migrations add InicialMigration --project ../UserCRUD --startup-project ../UserCRUD --output-dir ../UserCRUD/Data/Migrations
+dotnet ef migrations add InicialMigration --project ../Hexagon.Api --startup-project ../Hexagon.Api --output-dir ../Hexagon.Api/Data/Migrations
 
-dotnet ef database update --project ../UserCRUD --startup-project ../UserCRUD
+dotnet ef database update --project ../Hexagon.Api --startup-project ../Hexagon.Api
