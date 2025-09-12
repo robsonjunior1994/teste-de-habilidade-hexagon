@@ -25,7 +25,7 @@ namespace UserCRUD.Services
         {
             var user = await _userRepository.GetByEmail(userDTO.Email);
             if (user != null)
-                return Result<User>.Failure("Username or password is incorrect", ErrorCode.USER_ALREADY_EXISTS);
+                return Result<User>.Failure("Username or password is incorrect", ErrorCode.RESOURCE_ALREADY_EXISTS);
 
             var newUser = new User
             {
@@ -50,7 +50,10 @@ namespace UserCRUD.Services
         public async Task<Result<string>> Login(LoginRequestDTO loginDTO)
         {
             var user = await _userRepository.GetByEmail(loginDTO.Email);
-            var loginValid = _encryptionPasswordService.ValidatePassword(loginDTO.Password, user.Password);
+            if(user == null)
+                return Result<string>.Failure("User not found", ErrorCode.RESOURCE_NOT_FOUND);
+
+            var loginValid = _encryptionPasswordService.ValidatePassword(loginDTO.Password, user?.Password);
 
             if (!loginValid)
                 return Result<string>.Failure("Invalid email or password.", ErrorCode.INVALID_CREDENTIALS);

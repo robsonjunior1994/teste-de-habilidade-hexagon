@@ -41,7 +41,7 @@ namespace UserCRUD.Controllers
 
             if (!result.IsSuccess)
             {
-                int statusCode = MapErrorToStatusCode(result.ErrorCode);
+                int statusCode = MapError.MapErrorToStatusCode(result.ErrorCode);
 
                 response.IsFailure(result.ErrorMessage, statusCode.ToString(), userDTO);
                 return StatusCode(statusCode, response);
@@ -67,7 +67,7 @@ namespace UserCRUD.Controllers
             Result<string> result = await _userService.Login(loginDTO);
             if (!result.IsSuccess)
             {
-                int statusCode = MapErrorToStatusCode(result.ErrorCode);
+                int statusCode = MapError.MapErrorToStatusCode(result.ErrorCode);
                 response.IsFailure(result.ErrorMessage, statusCode.ToString(), result.Data);
                 return StatusCode(statusCode, response);
             }
@@ -90,19 +90,6 @@ namespace UserCRUD.Controllers
                 Email = userEmail,
                 Name = userName
             });
-        }
-
-        private int MapErrorToStatusCode(ErrorCode errorCode)
-        {
-            return errorCode switch
-            {
-                ErrorCode.USER_ALREADY_EXISTS => StatusCodes.Status409Conflict,
-                ErrorCode.INVALID_EMAIL => StatusCodes.Status422UnprocessableEntity,
-                ErrorCode.USER_NOT_FOUND => StatusCodes.Status404NotFound,
-                ErrorCode.INVALID_CREDENTIALS => StatusCodes.Status401Unauthorized,
-                ErrorCode.DATABASE_ERROR or ErrorCode.EXTERNAL_SERVICE_UNAVAILABLE => StatusCodes.Status503ServiceUnavailable,
-                _ => StatusCodes.Status400BadRequest // padrao para outros erros
-            };
         }
     }
 }

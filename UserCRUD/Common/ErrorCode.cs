@@ -7,10 +7,10 @@
         REQUIRED_FIELD,
 
         // Erros específicos de domínio (409, 422, 404)
-        USER_ALREADY_EXISTS,
+        RESOURCE_ALREADY_EXISTS,
         INVALID_EMAIL,
-        USER_NOT_FOUND,
-        INACTIVE_USER,
+        RESOURCE_NOT_FOUND,
+        INACTIVE_RESOURCE,
         INVALID_CREDENTIALS,
 
         // Erros de infraestrutura/inesperados (500)

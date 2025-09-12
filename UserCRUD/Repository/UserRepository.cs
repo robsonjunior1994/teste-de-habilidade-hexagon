@@ -28,8 +28,16 @@ namespace UserCRUD.Repository
 
         public async Task<User> GetByEmail(string email)
         {
-            return await _context.Users
+            try {
+                return await _context.Users
                 .FirstOrDefaultAsync(u => u.Email == email);
+            }
+            catch (Exception)
+            {
+                // Log do erro aqui
+                throw;
+            }
+            
         }
 
     }
