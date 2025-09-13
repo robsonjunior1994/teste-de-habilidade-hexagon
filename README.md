@@ -3,6 +3,28 @@ Link do desafio: [Link PRIVADO](https://drive.google.com/file/d/1ebhn52BzlPTXM2E
 
 Este projeto implementa um **CRUD (Create, Read, Update, Delete)** para a tabela de customer, seguindo uma arquitetura de três camadas e aderindo aos princípios **SOLID** para garantir manutenibilidade e escalabilidade.
 
+## Testando a Aplicação Web
+
+<details>
+<summary>Image,</summary>
+
+0. Abra o navegador e acesse o endereço onde o frontend está rodando (geralmente `http://localhost:63218/`).
+
+1.  **Criar um usuário.**
+2.  **Realizar login.** Para recueperar o token JWT necessário para autenticação nas operações de cliente.
+
+
+3.  **Cadastrar um cliente.**
+4.  **Listar clientes.**
+5.  **Atualizar um cliente.**
+6.  **Deletar um cliente.**
+</details>
+
+
+
+
+-----
+
 ### Pré-requisitos para Execução
 
 Para rodar o projeto localmente, você precisará ter:
@@ -143,7 +165,7 @@ O frontend foi desenvolvido utilizando **Vite** como ferramenta de build e **Rea
 
 -----
 
-## Testando a API e a Aplicação Web
+## Testando a API
 
 Um arquivo Postman com as requisições necessárias para testar o CRUD de usuários e clientes está disponível. As operações incluem:
 
@@ -156,3 +178,11 @@ Um arquivo Postman com as requisições necessárias para testar o CRUD de usuá
 5.  **Atualizar um cliente.**
 6.  **Deletar um cliente.**
 
+
+-----
+
+## Considerações Finais
+
+Este projeto demonstra a implementação de um sistema CRUD de usuário utilizando uma arquitetura de três camadas e princípios SOLID, garantindo um código limpo, organizado e fácil de manter. A utilização de Docker para o banco de dados e a construção do frontend com Vite e React proporcionam uma experiência de desenvolvimento moderna e eficiente. Sinta-se à vontade para explorar, modificar e expandir o projeto conforme suas necessidades!
+
+Meu maior conhecimento é no backend, por isso o frontend está simples, mas funcional. Caso tenha dúvidas ou sugestões, estou aberto a feedbacks!
