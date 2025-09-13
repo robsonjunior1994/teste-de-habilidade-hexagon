@@ -1,37 +1,64 @@
 ﻿import axios from 'axios';
 
-// Configuração base da API - use proxy do Vite
 const api = axios.create({
-    baseURL: '/api',  // ← Vai usar o proxy para https://localhost:7055
+    baseURL: '/api',
     headers: {
         'Content-Type': 'application/json',
     },
 });
 
-// Interceptor para debug (remova depois)
+// Interceptor para adicionar token automaticamente
 api.interceptors.request.use((config) => {
-    console.log('🔄 Making request to:', config.url);
+    const token = localStorage.getItem('token');
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+    }
     return config;
 });
 
-api.interceptors.response.use(
-    (response) => {
-        console.log('✅ Response:', response.status, response.data);
-        return response;
+// ✅ REMOVA o export daqui - deixe apenas const
+const jwtService = {
+    decodeToken: (token) => {
+        try {
+            const payload = token.split('.')[1];
+            return JSON.parse(atob(payload));
+        } catch {
+            return null;
+        }
     },
-    (error) => {
-        console.log('❌ Error:', error.response?.status, error.response?.data);
-        return Promise.reject(error);
-    }
-);
 
-export const authService = {
+    getUserIdFromToken: (token) => {
+        const decoded = jwtService.decodeToken(token);
+        return decoded?.nameid || decoded?.NameIdentifier || null;
+    },
+
+    getUserEmailFromToken: (token) => {
+        const decoded = jwtService.decodeToken(token);
+        return decoded?.email || decoded?.Email || null;
+    },
+
+    getUserNameFromToken: (token) => {
+        const decoded = jwtService.decodeToken(token);
+        return decoded?.unique_name || decoded?.UniqueName || decoded?.name || null;
+    },
+
+    isTokenExpired: (token) => {
+        const decoded = jwtService.decodeToken(token);
+        if (!decoded?.exp) return true;
+        return Date.now() >= decoded.exp * 1000;
+    }
+};
+
+const authService = {
     login: async (email, password) => {
         try {
-            const response = await api.post('/user/login', {
-                email,
-                password
-            });
+            const response = await api.post('/user/login', { email, password });
+
+            if (response.data.isSuccess && response.data.data?.token) {
+                localStorage.setItem('token', response.data.data.token);
+                localStorage.setItem('userEmail', email);
+            }
+
             return response.data;
         } catch (error) {
             throw error.response?.data || error.message;
@@ -39,4 +66,56 @@ export const authService = {
     },
 };
 
+const userService = {
+    register: async (userData) => {
+        try {
+            const response = await api.post('/user', userData);
+            return response.data;
+        } catch (error) {
+            throw error.response?.data || error.message;
+        }
+    },
+};
+
+// Adicione no customerService:
+export const customerService = {
+    create: async (customerData) => {
+        try {
+            const response = await api.post('/customer', customerData);
+            return response.data;
+        } catch (error) {
+            throw error.response?.data || error.message;
+        }
+    },
+
+    getById: async (customerId) => {
+        try {
+            const response = await api.get(`/customer/${customerId}`);
+            return response.data;
+        } catch (error) {
+            throw error.response?.data || error.message;
+        }
+    },
+
+    update: async (customerId, customerData) => {
+        try {
+            const response = await api.put(`/customer/${customerId}`, customerData);
+            return response.data;
+        } catch (error) {
+            throw error.response?.data || error.message;
+        }
+    },
+
+    delete: async (customerId) => {
+        try {
+            const response = await api.delete(`/customer/${customerId}`);
+            return response.data;
+        } catch (error) {
+            throw error.response?.data || error.message;
+        }
+    }
+};
+
+// ✅ APENAS UMA exportação final
+export { authService, userService, jwtService };
 export default api;
