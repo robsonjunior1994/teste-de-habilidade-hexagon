@@ -183,9 +183,7 @@ O frontend foi desenvolvido utilizando **Vite** como ferramenta de build e **Rea
 
 ## Testando a API
 
-Um arquivo Postman com as requisições necessárias para testar o CRUD de usuários e clientes está disponível. As operações incluem:
-
-
+Um arquivo Postman [LINK do arquivo](https://github.com/robsonjunior1994/teste-de-habilidade-hexagon/blob/main/Hexagonal.Api.postman_collection.json) com as requisições necessárias para testar o CRUD de usuários e clientes está disponível. As operações incluem:
 
 1.  **Criar um usuário.**
 2.  **Realizar login.** Para recueperar o token JWT necessário para autenticação nas operações de cliente.
