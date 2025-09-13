@@ -6,18 +6,34 @@ Este projeto implementa um **CRUD (Create, Read, Update, Delete)** para a tabela
 ## Testando a Aplicação Web
 
 <details>
-<summary>Image,</summary>
+<summary>Image do Sistema</summary>
 
 0. Abra o navegador e acesse o endereço onde o frontend está rodando (geralmente `http://localhost:63218/`).
 
-1.  **Criar um usuário.**
-2.  **Realizar login.** Para recueperar o token JWT necessário para autenticação nas operações de cliente.
+1. **Página de Login.**
 
+<img width="1918" height="1029" alt="image" src="https://github.com/user-attachments/assets/1f1a28cd-2819-4894-a8a9-b20def461553" />
+2. **Criar um usuário.**
 
-3.  **Cadastrar um cliente.**
+<img width="1919" height="1032" alt="image" src="https://github.com/user-attachments/assets/27aabf87-aed9-4af0-a190-4b16b3da0e03" />
+
+3.  **Página Home.** Após o login ser realizado
+
+<img width="1919" height="1030" alt="image" src="https://github.com/user-attachments/assets/b1661e04-1c54-4965-acfb-4fde8b3ca8d4" />
+
 4.  **Listar clientes.**
-5.  **Atualizar um cliente.**
-6.  **Deletar um cliente.**
+
+<img width="1917" height="1029" alt="image" src="https://github.com/user-attachments/assets/a4c33a6c-5309-491a-9eac-622f09b61e5f" />
+
+<img width="1919" height="1028" alt="image" src="https://github.com/user-attachments/assets/25b259d4-3931-40ee-be1b-6324bfd9eb1d" />
+
+5.  **Cadastrar um cliente.**
+
+<img width="1919" height="1030" alt="image" src="https://github.com/user-attachments/assets/4f968620-63d0-4cb4-8d7a-8edc57cd6193" />
+
+6.  **Atualizar um cliente.** e **Deletar um cliente.**
+<img width="1919" height="1030" alt="image" src="https://github.com/user-attachments/assets/5f737541-2de7-4e0e-bc22-4be5eec370b1" />
+
 </details>
 
 
@@ -168,6 +184,8 @@ O frontend foi desenvolvido utilizando **Vite** como ferramenta de build e **Rea
 ## Testando a API
 
 Um arquivo Postman com as requisições necessárias para testar o CRUD de usuários e clientes está disponível. As operações incluem:
+
+
 
 1.  **Criar um usuário.**
 2.  **Realizar login.** Para recueperar o token JWT necessário para autenticação nas operações de cliente.
