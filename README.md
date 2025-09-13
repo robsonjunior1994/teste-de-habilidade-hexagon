@@ -117,6 +117,25 @@ A aderência aos princípios **SOLID** garante que o código seja organizado, f�
 
 A configuração de dependências utiliza o escopo **`scoped`**, garantindo que uma nova instância de serviço ou repositório seja criada para cada requisição HTTP, o que é crucial para evitar problemas de concorrência e manter a consistência dos dados.
 
+
+### Teste unitário
+O projeto inclui testes unitários para validar a lógica de negócio, utilizando frameworks como **xUnit** e **Moq**. Os testes cobrem os principais cenários, garantindo que os serviços funcionem conforme o esperado e que as regras de negócio sejam corretamente aplicadas impedindo alterações indevidas no código.
+
+### Seguindo o básico de API Restful
+A API foi projetada seguindo os princípios RESTful, utilizando os verbos HTTP adequados para cada operação:
+  * **POST:** Para criar novos recursos (usuários e clientes).
+  * **GET:** Para recuperar recursos (listar clientes).
+  * **PUT:** Para atualizar recursos existentes (atualizar clientes).
+  * **DELETE:** Para remover recursos (deletar clientes).
+
+### Docker
+Utilizei o docker para extrair a complexidade de instalação do banco de dados, e também para facilitar a portabilidade do projeto.
+
+### Frontend com Vite e React
+O frontend foi desenvolvido utilizando **Vite** como ferramenta de build e **React** para a construção da interface do usuário. O Vite proporciona um ambiente de desenvolvimento rápido e eficiente, enquanto o React permite a criação de componentes reutilizáveis e uma experiência de usuário dinâmica.
+
+**Obs.:** Tenho conhecimento básico de HTML, CSS e JavaScript e um pouco de react, por isso, toda estrutura do frontend foi criada a partir de comando no LLM (ChatGPT), e posteriormente ajustada conforme a necessidade do projeto.
+
 ### Outras Tecnologias Utilizadas
 
   * **Entity Framework Core:** Utilizado como ORM para facilitar a interação com o banco de dados MySQL e gerenciar migrações.
@@ -129,7 +148,9 @@ A configuração de dependências utiliza o escopo **`scoped`**, garantindo que 
 Um arquivo Postman com as requisições necessárias para testar o CRUD de usuários e clientes está disponível. As operações incluem:
 
 1.  **Criar um usuário.**
-2.  **Realizar login.**
+2.  **Realizar login.** Para recueperar o token JWT necessário para autenticação nas operações de cliente.
+
+
 3.  **Cadastrar um cliente.**
 4.  **Listar clientes.**
 5.  **Atualizar um cliente.**
