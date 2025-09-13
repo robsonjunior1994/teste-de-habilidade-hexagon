@@ -1,103 +1,137 @@
-# teste-de-habilidade-hexagon
-Será criado um CRUD para uma tabela de usuário.
-
+## Projeto CRUD de Usuário: Um Guia Detalhado
 Link do desafio: [Link PRIVADO](https://drive.google.com/file/d/1ebhn52BzlPTXM2EndGbx0PhWrwvhj3dp/view?usp=drive_link)
 
-#### Comandos
+Este projeto implementa um **CRUD (Create, Read, Update, Delete)** para a tabela de customer, seguindo uma arquitetura de três camadas e aderindo aos princípios **SOLID** para garantir manutenibilidade e escalabilidade.
 
-**Para criar e rodar localmente o SQL Server:**
+### Pré-requisitos para Execução
 
-docker pull mysql:8.0
-docker run --name mysql-container -e MYSQL_ROOT_PASSWORD=Senha123! -e MYSQL_DATABASE=meuBanco -p 3306:3306 -d mysql:8.0
+Para rodar o projeto localmente, você precisará ter:
 
-**Para configurar a senha e o usuário hexagon:**
-**Entre no container MySQL:**
+  * **.NET 8.0** instalado.
+  * **Docker Desktop** instalado e em execução.
+  * **node.js v22.19.0r** instalado (para o projeto web).
 
-docker exec -it mysql-container mysql -u root -pSenha123!
+### Configuração do Banco de Dados MySQL no Docker
 
-**Criar o usuário hexagon**
-CREATE USER 'hexagon'@'%' IDENTIFIED BY 'senhaHexagon';
+Siga estes passos para configurar seu banco de dados MySQL:
 
-**Conceder todos os privilégios em todos os bancos de dados (igual ao root)**
-GRANT ALL PRIVILEGES ON *.* TO 'hexagon'@'%' WITH GRANT OPTION;
+1.  **Puxar a imagem do MySQL:**
+    ```bash
+    docker pull mysql:8.0
+    ```
+2.  **Executar o contêiner do MySQL:**
+    ```bash
+    docker run --name mysql-container -e MYSQL_ROOT_PASSWORD=Senha123! -e MYSQL_DATABASE=meuBanco -p 3306:3306 -d mysql:8.0
+    ```
+3.  **Configurar o usuário `hexagon`:**
+      * Entre no contêiner MySQL:
+        ```bash
+        docker exec -it mysql-container mysql -u root -pSenha123!
+        ```
+      * Crie o usuário `hexagon`:
+        ```sql
+        CREATE USER 'hexagon'@'%' IDENTIFIED BY 'senhaHexagon';
+        ```
+      * Conceda todos os privilégios (similar ao root):
+        ```sql
+        GRANT ALL PRIVILEGES ON *.* TO 'hexagon'@'%' WITH GRANT OPTION;
+        ```
+      * Aplique as mudanças:
+        ```sql
+        FLUSH PRIVILEGES;
+        ```
 
-**Aplicar as mudanças**
-FLUSH PRIVILEGES;
+### Executando as Migrações Iniciais
 
-**Para rodar a migração inicial:**
+Para aplicar as migrações do banco de dados:
 
-dotnet ef migrations add InicialMigration --project ../Hexagon.Api --startup-project ../Hexagon.Api --output-dir ../Hexagon.Api/Data/Migrations
+```powershell
+# Navegue até a pasta do projeto API (ajuste o caminho se necessário)
+cd ../Hexagon.Api
 
+# Execute os comandos de migração (no Package Manager Console do Visual Studio ou similar)
+dotnet ef migrations add InicialMigration --project ../Hexagon.Api --startup-project ../Hexagon.Api --output-dir ../Hexagon.Api/Infrastruture/Data/Migrations
 dotnet ef database update --project ../Hexagon.Api --startup-project ../Hexagon.Api
+```
+
+### Rodando a Aplicação Web
+
+Para iniciar o projeto web:
+
+1.  Abra o **Prompt de Comando como Administrador**.
+2.  Navegue até a pasta do projeto web:
+    ```bash
+    cd Hexagon.Web
+    ```
+3.  Limpe o cache do npm, se necessário:
+    ```bash
+    npm cache clean --force
+    ```
+4.  Instale as dependências:
+    ```bash
+    npm install
+    ```
+5.  Execute o projeto:
+    ```bash
+    npm run dev
+    ```
+    O servidor será iniciado e exibirá o endereço para acesso ao site (geralmente `http://localhost:63218/`).
 
 
-**Para Rodar o web**
+### Rodando a API
 
-# Abra o Command Prompt como Administrador
+Execute o comando 
+ ```bash
+dotnet run --launch-profile "https"
+   ```
+no caminho: **..\Hexagon.Api**
 
-# Navegue até a pasta
-cd Hexagon.Web
+Ou pelo Visual Studio:
+No menu dropdown de inicialização (geralmente perto do botão "Start")
 
-# Limpe cache se necessário
-npm cache clean --force
+Clique em "Start"
 
-# Instale dependências
-npm install
-
-# Execute o projeto
-npm run dev
-
-# O servidor vai iniciar e mostrar:
-# ➜  Local:   http://localhost:63218/
-# ➜  Network: use --host to expose
+-----
 
 
-**Rascunho de explicação do projeto*
+## Arquitetura e Princípios de Projeto
 
-Seguindo um padrão de projeto em 3 camadas, temos a camada de dominio, aplicação e infraestrutura. [link](https://macoratti.net/21/08/net_arq3layer1.htm)
+O projeto adota uma **arquitetura de três camadas**: Domínio, Apresentação e Infraestrutura.
 
-1 - A camada de domínio é responsável por conter as entidades e regras de negócio. 
-2 - O Serviço fica na camada de domínio pois é um serviço de domínio e ele é responsável por definir as regras de negócio para cada ação do sistema e orquestrar a ligação com a camada de infraestrutura. 
-3 - A camada de infraestrutura é responsável por interagir com o banco de dados e outros serviços externos.
+  * A **camada de Domínio** contém as entidades e as regras de negócio centrais do sistema. O serviço de domínio reside aqui, definindo a lógica de negócio e orquestrando as interações com a camada de infraestrutura.
+  * A **camada de Infraestrutura** é responsável pela persistência de dados (interação com o banco de dados) e integração com serviços externos.
+  * A **camada de Apresentação** é responsável pela comunicação HTTP com a API e validaçõa dos modelos de entrada e montagem dos modelos de saída.
 
-Utilizei os princípios SOLID para garantir que o código seja fácil de manter e escalar.
+### Aplicação dos Princípios SOLID
 
-S - Principio de responsabilidade única: Cada classe tem uma única responsabilidade.
- O Controller, é responsável por lidar com as requisições HTTP e chamar os serviços apropriados. Além disso no controller, é feita a validação dos dados de entrada e a formatação da resposta.
- O Serviço, é responsável por implementar a lógica de negócio e orquestrar as operações entre o repositório e o controller.
- O Repositório, é responsável por interagir com o banco de dados e realizar as operações CRUD.
+A aderência aos princípios **SOLID** garante que o código seja organizado, fácil de manter e escalar:
 
- Conseguindo assim manter o código organizado e fácil de entender utilizando o principio de responsabilidade única.
+  * **S (Single Responsibility Principle - Princípio da Responsabilidade Única):** Cada classe possui uma única responsabilidade bem definida.
+      * **Controllers:** Lidam com requisições HTTP, validação de entrada e formatação de respostas, chamando os serviços apropriados.
+      * **Serviços:** Implementam a lógica de negócio e orquestram operações entre controllers e repositórios.
+      * **Repositórios:** Gerenciam a interação direta com o banco de dados para operações CRUD.
+  * **O (Open/Closed Principle - Princípio Aberto/Fechado):** As classes são abertas para extensão, mas fechadas para modificação. O uso de **interfaces** para serviços e repositórios permite a adição de novas implementações (como a troca de banco de dados de MySQL para SQL Server) com modificações mínimas no código existente.
+  * **L (Liskov Substitution Principle - Princípio de Substituição de Liskov):** Implementações de interfaces são substituíveis por outras sem afetar o funcionamento do sistema, garantindo flexibilidade e facilidade de manutenção.
+  * **I (Interface Segregation Principle - Princípio da Segregação de Interfaces):** Interfaces são criadas de forma específica para cada cliente (serviço ou repositório), evitando interfaces genéricas e grandes, o que facilita o entendimento e a manutenção do código.
+  * **D (Dependency Inversion Principle - Princípio da Inversão de Dependência):** Dependências são gerenciadas através de **injeção de dependência**, onde classes dependem de abstrações (interfaces) em vez de implementações concretas. Isso facilita a substituição de dependências e o teste do código.
 
- O - Princípio aberto/fechado: As classes devem ser abertas para extensão, mas fechadas para modificação.
-  Utilizei interfaces para definir contratos para os serviços e repositórios, permitindo que novas implementações possam ser adicionadas sem modificar o código existente. Ou seja eu não tenho que modificar o código existente para adicionar novas funcionalidades, apenas criar novas classes que implementem as interfaces existentes se eu precisar trocar o banco de dados por exemplo de MySQl Para SQL Server, a modificação seria mínima.
+A configuração de dependências utiliza o escopo **`scoped`**, garantindo que uma nova instância de serviço ou repositório seja criada para cada requisição HTTP, o que é crucial para evitar problemas de concorrência e manter a consistência dos dados.
 
+### Outras Tecnologias Utilizadas
 
-  L - Princípio de substituição de Liskov: As subclasses devem ser substituíveis por suas classes base.
-  As classes que implementam as interfaces podem ser substituídas por outras implementações sem afetar o funcionamento do sistema. Isso garante que o código seja flexível e fácil de manter ou seja eu posso trocar a implementação do repositório sem afetar o serviço ou o controller.
-  
-  I - Princípio da segregação de interfaces: As interfaces devem ser específicas para o cliente.
-	Estou criando interfaces que são específicas para cada serviço ou repositório, evitando interfaces grandes e genéricas. Isso torna o código mais fácil de entender e manter.
+  * **Entity Framework Core:** Utilizado como ORM para facilitar a interação com o banco de dados MySQL e gerenciar migrações.
+  * **FluentValidation:** Empregado para a validação robusta dos dados de entrada nos controllers, assegurando a integridade dos dados antes do processamento.
 
-  D - Princípio da inversão de dependência: As classes devem depender de abstrações, não de implementações concretas.
-  Utilizei injeção de dependência para fornecer as implementações dos serviços e repositórios para os controllers e services/repository também utilizaram a injeção de depêndencia. Isso permite que as dependências sejam facilmente substituídas, facilitando testes e manutenção do código.
+-----
 
-  Utilizei o tipo scoped para os serviços e repositórios, garantindo que uma nova instância seja criada para cada requisição HTTP. Isso é importante para evitar problemas de concorrência e garantir que os dados sejam consistentes durante a execução de uma requisição.
+## Testando a API e a Aplicação Web
 
-  Utilizei o Entity Framework Core como ORM para interagir com o banco de dados MySQL. O EF Core facilita a manipulação dos dados e a criação das migrações para manter o banco de dados atualizado com as mudanças no modelo de dados.
+Um arquivo Postman com as requisições necessárias para testar o CRUD de usuários e clientes está disponível. As operações incluem:
 
-  Utilizei o FluentValidation para validar os dados de entrada nos controllers. Isso garante que os dados sejam válidos antes de serem processados pelos serviços, evitando erros e inconsistências no sistema.
-
-  #### Como utilizar via API e WEB
-
-  Segue anexo um arquivo Postman com as requisições para testar.
-
-  1 - Criar um usuário
-  2 - Fazer login
-  3 - Cadastrar um cliente
-  4 - Listar clientes
-  5 - Atualizar um cliente
-  6 - Deletar um cliente
-
-
+1.  **Criar um usuário.**
+2.  **Realizar login.**
+3.  **Cadastrar um cliente.**
+4.  **Listar clientes.**
+5.  **Atualizar um cliente.**
+6.  **Deletar um cliente.**
 
