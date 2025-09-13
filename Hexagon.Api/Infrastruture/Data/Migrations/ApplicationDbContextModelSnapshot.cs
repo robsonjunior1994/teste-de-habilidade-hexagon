@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Hexagon.Api.Data.Migrations
+namespace Hexagon.Api.Infrastruture.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     partial class ApplicationDbContextModelSnapshot : ModelSnapshot
@@ -22,7 +22,7 @@ namespace Hexagon.Api.Data.Migrations
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
 
-            modelBuilder.Entity("UserCRUD.Models.Customer", b =>
+            modelBuilder.Entity("Hexagon.Api.Domain.Models.Customer", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -58,7 +58,7 @@ namespace Hexagon.Api.Data.Migrations
                     b.ToTable("Customers");
                 });
 
-            modelBuilder.Entity("UserCRUD.Models.User", b =>
+            modelBuilder.Entity("Hexagon.Api.Domain.Models.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -80,9 +80,9 @@ namespace Hexagon.Api.Data.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("UserCRUD.Models.Customer", b =>
+            modelBuilder.Entity("Hexagon.Api.Domain.Models.Customer", b =>
                 {
-                    b.HasOne("UserCRUD.Models.User", "User")
+                    b.HasOne("Hexagon.Api.Domain.Models.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId");
 

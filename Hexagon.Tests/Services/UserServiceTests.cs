@@ -3,8 +3,8 @@ using Hexagon.Api.Domain.Services;
 using Hexagon.Api.Domain.Services.Interfaces;
 using Hexagon.Api.Infrastruture.Repository.Interface;
 using Hexagon.Api.Presentation.Common;
+using Hexagon.Api.Presentation.DTOs.Request;
 using Moq;
-using UserCRUD.DTOs.Request;
 
 namespace Hexagon.Tests.Services
 {

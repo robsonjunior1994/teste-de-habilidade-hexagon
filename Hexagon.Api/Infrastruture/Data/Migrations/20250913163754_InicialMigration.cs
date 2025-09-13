@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Hexagon.Api.Data.Migrations
+namespace Hexagon.Api.Infrastruture.Data.Migrations
 {
     /// <inheritdoc />
     public partial class InicialMigration : Migration
