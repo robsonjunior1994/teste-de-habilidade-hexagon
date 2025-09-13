@@ -29,3 +29,24 @@ FLUSH PRIVILEGES;
 dotnet ef migrations add InicialMigration --project ../Hexagon.Api --startup-project ../Hexagon.Api --output-dir ../Hexagon.Api/Data/Migrations
 
 dotnet ef database update --project ../Hexagon.Api --startup-project ../Hexagon.Api
+
+
+**Para Rodar o web**
+
+# Abra o Command Prompt como Administrador
+
+# Navegue até a pasta
+cd Hexagon.Web
+
+# Limpe cache se necessário
+npm cache clean --force
+
+# Instale dependências
+npm install
+
+# Execute o projeto
+npm run dev
+
+# O servidor vai iniciar e mostrar:
+# ➜  Local:   http://localhost:63218/
+# ➜  Network: use --host to expose
