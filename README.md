@@ -132,9 +132,9 @@ A API foi projetada seguindo os princípios RESTful, utilizando os verbos HTTP a
 Utilizei o docker para extrair a complexidade de instalação do banco de dados, e também para facilitar a portabilidade do projeto.
 
 ### Frontend com Vite e React
-O frontend foi desenvolvido utilizando **Vite** como ferramenta de build e **React** para a construção da interface do usuário. O Vite proporciona um ambiente de desenvolvimento rápido e eficiente, enquanto o React permite a criação de componentes reutilizáveis e uma experiência de usuário dinâmica.
+O frontend foi desenvolvido utilizando **Vite** como ferramenta de build e **React** para a construção da interface do usuário. O Vite proporciona um ambiente de desenvolvimento rápido (hot reload) e eficiente, enquanto o React permite a criação de componentes reutilizáveis e uma experiência de usuário dinâmica.
 
-**Obs.:** Tenho conhecimento básico de HTML, CSS e JavaScript e um pouco de react, por isso, toda estrutura do frontend foi criada a partir de comando no LLM (ChatGPT), e posteriormente ajustada conforme a necessidade do projeto.
+**Obs.:** Tenho conhecimento básico de HTML, CSS e JavaScript e um pouco de React, por isso, toda a estrutura do frontend foi criada a partir de comandos no LLM (ChatGPT), e posteriormente ajustada conforme a necessidade do projeto. Entendo um pouco de componentização, mas não utilizei todo o poder dos componentes por falta de prática e tempo de desenvolvimento.
 
 ### Outras Tecnologias Utilizadas
 
