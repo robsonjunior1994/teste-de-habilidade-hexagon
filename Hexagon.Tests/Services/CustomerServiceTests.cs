@@ -1,4 +1,5 @@
-﻿using Moq;
+﻿using Hexagon.Api.Common;
+using Moq;
 using UserCRUD.Common;
 using UserCRUD.DTOs.Request;
 using UserCRUD.Models;
@@ -134,22 +135,31 @@ namespace Hexagon.Tests.Services
         {
             // Arrange
             var userId = 1;
-            var customers = new List<Customer>
-            {
-                new Customer { Id = 1, Name = "Customer 1", User = new User { Id = userId } },
-                new Customer { Id = 2, Name = "Customer 2", User = new User { Id = userId } }
-            };
+            var pageNumber = 1;
+            var pageSize = 10;
 
-            _customerRepositoryMock.Setup(r => r.GetAll(userId))
-                .ReturnsAsync(customers);
+            var customers = new List<Customer>
+    {
+        new Customer { Id = 1, Name = "Customer 1", User = new User { Id = userId } },
+        new Customer { Id = 2, Name = "Customer 2", User = new User { Id = userId } }
+    };
+
+            var repositoryResult = (Items: customers, TotalCount: 2);
+
+            _customerRepositoryMock.Setup(r => r.GetAll(userId, pageNumber, pageSize))
+                .ReturnsAsync(repositoryResult);
 
             // Act
-            var result = await _customerService.GetAll(userId);
+            var result = await _customerService.GetAll(userId, pageNumber, pageSize);
 
             // Assert
             Assert.True(result.IsSuccess);
             Assert.NotNull(result.Data);
-            Assert.Equal(2, result.Data.Count);
+            Assert.Equal(2, result.Data.Items.Count);
+            Assert.Equal(2, result.Data.TotalCount);
+            Assert.Equal(1, result.Data.TotalPages);
+            Assert.Equal(pageNumber, result.Data.PageNumber);
+            Assert.Equal(pageSize, result.Data.PageSize);
         }
 
         [Fact]
@@ -157,18 +167,24 @@ namespace Hexagon.Tests.Services
         {
             // Arrange
             var userId = 1;
-            var emptyList = new List<Customer>();
+            var pageNumber = 1;
+            var pageSize = 10;
 
-            _customerRepositoryMock.Setup(r => r.GetAll(userId))
-                .ReturnsAsync(emptyList);
+            var emptyList = new List<Customer>();
+            var repositoryResult = (Items: emptyList, TotalCount: 0);
+
+            _customerRepositoryMock.Setup(r => r.GetAll(userId, pageNumber, pageSize))
+                .ReturnsAsync(repositoryResult);
 
             // Act
-            var result = await _customerService.GetAll(userId);
+            var result = await _customerService.GetAll(userId, pageNumber, pageSize);
 
             // Assert
             Assert.True(result.IsSuccess);
             Assert.NotNull(result.Data);
-            Assert.Empty(result.Data);
+            Assert.Empty(result.Data.Items);
+            Assert.Equal(0, result.Data.TotalCount);
+            Assert.Equal(0, result.Data.TotalPages);
         }
 
         [Fact]
@@ -176,16 +192,19 @@ namespace Hexagon.Tests.Services
         {
             // Arrange
             var userId = 1;
+            var pageNumber = 1;
+            var pageSize = 10;
 
-            _customerRepositoryMock.Setup(r => r.GetAll(userId))
+            _customerRepositoryMock.Setup(r => r.GetAll(userId, pageNumber, pageSize))
                 .ThrowsAsync(new Exception("Database error"));
 
             // Act
-            var result = await _customerService.GetAll(userId);
+            var result = await _customerService.GetAll(userId, pageNumber, pageSize);
 
             // Assert
             Assert.False(result.IsSuccess);
             Assert.Equal(ErrorCode.DATABASE_ERROR, result.ErrorCode);
+            Assert.Null(result.Data);
         }
 
         [Fact]

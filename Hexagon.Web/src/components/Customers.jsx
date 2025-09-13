@@ -7,13 +7,21 @@ const Customers = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [deletingId, setDeletingId] = useState(null);
+    const [pagination, setPagination] = useState({
+        currentPage: 1,
+        totalPages: 1,
+        totalCount: 0,
+        pageSize: 10,
+        hasPreviousPage: false,
+        hasNextPage: false
+    });
     const navigate = useNavigate();
 
     useEffect(() => {
-        checkAuthAndFetchCustomers();
+        checkAuthAndFetchCustomers(1);
     }, [navigate]);
 
-    const checkAuthAndFetchCustomers = async () => {
+    const checkAuthAndFetchCustomers = async (pageNumber) => {
         const token = localStorage.getItem('token');
 
         if (!token) {
@@ -27,7 +35,7 @@ const Customers = () => {
                 throw new Error('Invalid token');
             }
 
-            await fetchCustomers();
+            await fetchCustomers(pageNumber);
         } catch (error) {
             console.error('Auth error:', error);
             localStorage.removeItem('token');
@@ -37,12 +45,21 @@ const Customers = () => {
         }
     };
 
-    const fetchCustomers = async () => {
+    const fetchCustomers = async (pageNumber = 1) => {
         try {
-            const response = await api.get('/customer');
+            const response = await api.get(`/customer?pageNumber=${pageNumber}`);
 
             if (response.data.isSuccess) {
-                setCustomers(response.data.data || []);
+                setCustomers(response.data.data.items || []);
+                setPagination({
+                    currentPage: response.data.data.pageNumber,
+                    totalPages: response.data.data.totalPages,
+                    totalCount: response.data.data.totalCount,
+                    pageSize: response.data.data.pageSize,
+                    hasPreviousPage: response.data.data.hasPreviousPage,
+                    hasNextPage: response.data.data.hasNextPage
+                });
+                setError('');
             } else {
                 setError(response.data.errorMessage || 'Failed to fetch customers');
             }
@@ -63,12 +80,9 @@ const Customers = () => {
             const response = await api.delete(`/customer/${customerId}`);
 
             if (response.data.isSuccess) {
-                // Remove o customer da lista localmente
-                setCustomers(customers.filter(customer => customer.id !== customerId));
+                // Recarrega a lista mantendo a página atual
+                await fetchCustomers(pagination.currentPage);
                 alert('Customer deleted successfully!');
-
-                // Recarrega a lista para garantir sincronização
-                await fetchCustomers();
             } else {
                 setError(response.data.errorMessage || 'Failed to delete customer');
             }
@@ -80,8 +94,110 @@ const Customers = () => {
         }
     };
 
+    const handlePageChange = (newPage) => {
+        if (newPage >= 1 && newPage <= pagination.totalPages) {
+            setLoading(true);
+            fetchCustomers(newPage).finally(() => setLoading(false));
+        }
+    };
+
     const handleBack = () => {
         navigate('/home');
+    };
+
+    const renderPaginationButtons = () => {
+        const buttons = [];
+        const maxVisiblePages = 5;
+        const { currentPage, totalPages } = pagination;
+
+        let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+        let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+        if (endPage - startPage + 1 < maxVisiblePages) {
+            startPage = Math.max(1, endPage - maxVisiblePages + 1);
+        }
+
+        // Botão Previous
+        buttons.push(
+            <button
+                key="prev"
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={!pagination.hasPreviousPage}
+                className="px-3 py-1 border border-gray-300 rounded-md text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+            >
+                Previous
+            </button>
+        );
+
+        // Primeira página (se necessário)
+        if (startPage > 1) {
+            buttons.push(
+                <button
+                    key={1}
+                    onClick={() => handlePageChange(1)}
+                    className="px-3 py-1 border border-gray-300 rounded-md text-sm font-medium hover:bg-gray-50"
+                >
+                    1
+                </button>
+            );
+            if (startPage > 2) {
+                buttons.push(
+                    <span key="ellipsis-start" className="px-2 py-1">
+                        ...
+                    </span>
+                );
+            }
+        }
+
+        // Páginas numeradas
+        for (let i = startPage; i <= endPage; i++) {
+            buttons.push(
+                <button
+                    key={i}
+                    onClick={() => handlePageChange(i)}
+                    className={`px-3 py-1 border border-gray-300 rounded-md text-sm font-medium ${i === currentPage
+                            ? 'bg-blue-500 text-white border-blue-500'
+                            : 'hover:bg-gray-50'
+                        }`}
+                >
+                    {i}
+                </button>
+            );
+        }
+
+        // Última página (se necessário)
+        if (endPage < totalPages) {
+            if (endPage < totalPages - 1) {
+                buttons.push(
+                    <span key="ellipsis-end" className="px-2 py-1">
+                        ...
+                    </span>
+                );
+            }
+            buttons.push(
+                <button
+                    key={totalPages}
+                    onClick={() => handlePageChange(totalPages)}
+                    className="px-3 py-1 border border-gray-300 rounded-md text-sm font-medium hover:bg-gray-50"
+                >
+                    {totalPages}
+                </button>
+            );
+        }
+
+        // Botão Next
+        buttons.push(
+            <button
+                key="next"
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={!pagination.hasNextPage}
+                className="px-3 py-1 border border-gray-300 rounded-md text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+            >
+                Next
+            </button>
+        );
+
+        return buttons;
     };
 
     if (loading) {
@@ -148,16 +264,19 @@ const Customers = () => {
 
                     <div className="mb-6">
                         <h2 className="text-2xl font-bold text-gray-800 mb-2">
-                            Customer List ({customers.length})
+                            Customer List ({pagination.totalCount})
                         </h2>
-                        <p className="text-gray-600">All registered customers in the system</p>
+                        <p className="text-gray-600">
+                            Page {pagination.currentPage} of {pagination.totalPages} •{' '}
+                            Showing {customers.length} of {pagination.totalCount} customers
+                        </p>
                     </div>
 
                     {customers.length === 0 ? (
                         <div className="text-center py-12">
                             <p className="text-gray-500 text-lg">No customers found</p>
                             <button
-                                onClick={fetchCustomers}
+                                onClick={() => fetchCustomers(1)}
                                 className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg mt-4"
                             >
                                 Refresh
@@ -242,6 +361,18 @@ const Customers = () => {
                                 </table>
                             </div>
 
+                            {/* Paginação */}
+                            <div className="mt-6 flex flex-col sm:flex-row items-center justify-between">
+                                <div className="text-sm text-gray-700 mb-4 sm:mb-0">
+                                    Showing {((pagination.currentPage - 1) * pagination.pageSize) + 1} to{' '}
+                                    {Math.min(pagination.currentPage * pagination.pageSize, pagination.totalCount)} of{' '}
+                                    {pagination.totalCount} entries
+                                </div>
+                                <div className="flex space-x-2">
+                                    {renderPaginationButtons()}
+                                </div>
+                            </div>
+
                             {/* Cards view for mobile */}
                             <div className="mt-6 grid grid-cols-1 gap-4 md:hidden">
                                 {customers.map((customer) => (
@@ -265,7 +396,6 @@ const Customers = () => {
                                                 <span className="text-gray-600">State:</span> {customer.state}
                                             </div>
                                         </div>
-                                        {/* ↓↓↓ BOTÕES EDIT E DELETE PARA MOBILE ↓↓↓ */}
                                         <div className="flex space-x-2 mt-3">
                                             <button
                                                 onClick={() => navigate(`/customers/edit/${customer.id}`)}

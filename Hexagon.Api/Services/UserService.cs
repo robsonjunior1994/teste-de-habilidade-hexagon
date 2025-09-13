@@ -40,7 +40,7 @@ namespace UserCRUD.Services
                 await _userRepository.Create(newUser);
                 return Result<User>.Success(newUser);
             }
-            catch (Exception ex)
+            catch
             {
                 // CRIAR SERVIÇO DE LOG
                 return Result<User>.Failure("An error occurred while creating the user.", ErrorCode.DATABASE_ERROR);

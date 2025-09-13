@@ -1,4 +1,5 @@
-﻿using UserCRUD.Common;
+﻿using Hexagon.Api.Common;
+using UserCRUD.Common;
 using UserCRUD.DTOs.Request;
 using UserCRUD.Models;
 using UserCRUD.Repository.Interface;
@@ -42,24 +43,34 @@ namespace UserCRUD.Services
                 await _customerRepository.Create(newCustomer);
                 return Result<Customer>.Success(newCustomer);
             }
-            catch (Exception ex)
+            catch 
             {
                 // CRIAR SERVIÇO DE LOG
                 return Result<Customer>.Failure("An error occurred while creating the customer.", ErrorCode.DATABASE_ERROR);
             }
         }
 
-        public async Task<Result<List<Customer>>> GetAll(int id)
+        public async Task<Result<PaginatedResult<Customer>>> GetAll(int id, int pageNumber = 1, int pageSize = 10)
         {
             try
             {
-                var customers = await _customerRepository.GetAll(id);
-                return Result<List<Customer>>.Success(customers);
+                var result = await _customerRepository.GetAll(id, pageNumber, pageSize);
+
+                var paginatedResult = new PaginatedResult<Customer>
+                {
+                    Items = result.Items,
+                    TotalCount = result.TotalCount,
+                    PageNumber = pageNumber,
+                    PageSize = pageSize,
+                    TotalPages = (int)Math.Ceiling(result.TotalCount / (double)pageSize)
+                };
+
+                return Result<PaginatedResult<Customer>>.Success(paginatedResult);
             }
-            catch (Exception ex)
+            catch 
             {
                 // CRIAR SERVIÇO DE LOG
-                return Result<List<Customer>>.Failure("An error occurred while retrieving customers.", ErrorCode.DATABASE_ERROR);
+                return Result<PaginatedResult<Customer>>.Failure("An error occurred while retrieving customers.", ErrorCode.DATABASE_ERROR);
             }
         }
 
@@ -74,7 +85,7 @@ namespace UserCRUD.Services
                 }
                 return Result<Customer>.Success(customer);
             }
-            catch (Exception ex)
+            catch 
             {
                 // CRIAR SERVIÇO DE LOG
                 return Result<Customer>.Failure("An error occurred while retrieving the customer.", ErrorCode.DATABASE_ERROR);
@@ -93,7 +104,7 @@ namespace UserCRUD.Services
                 await _customerRepository.Delete(customer);
                 return Result<Customer>.Success(customer);
             }
-            catch (Exception ex)
+            catch 
             {
                 // CRIAR SERVIÇO DE LOG
                 return Result<Customer>.Failure("An error occurred while deleting the customer.", ErrorCode.DATABASE_ERROR);
@@ -119,7 +130,7 @@ namespace UserCRUD.Services
                 await _customerRepository.Update(customer);
                 return Result<Customer>.Success(customer);
             }
-            catch (Exception ex)
+            catch 
             {
                 // CRIAR SERVIÇO DE LOG
                 return Result<Customer>.Failure("An error occurred while updating the customer.", ErrorCode.DATABASE_ERROR);

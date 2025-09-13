@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Hexagon.Api.Common;
+using Microsoft.EntityFrameworkCore;
+using UserCRUD.Common;
 using UserCRUD.Data;
 using UserCRUD.Models;
 using UserCRUD.Repository.Interface;
@@ -40,13 +42,22 @@ namespace UserCRUD.Repository
             }
         }
 
-        public async Task<List<Customer>> GetAll(int userId)
+        public async Task<(List<Customer> Items, int TotalCount)> GetAll(int userId, int pageNumber = 1, int pageSize = 10)
         {
             try
             {
-                return await _context.Customers
-                    .Where(c => c.User.Id == userId)
+                var query = _context.Customers
+                    .Where(c => c.User.Id == userId);
+
+                var totalCount = await query.CountAsync();
+
+                var items = await query
+                    .OrderBy(c => c.Name)
+                    .Skip((pageNumber - 1) * pageSize)
+                    .Take(pageSize)
                     .ToListAsync();
+
+                return (items, totalCount);
             }
             catch
             {
@@ -96,5 +107,7 @@ namespace UserCRUD.Repository
                 throw;
             }
         }
+
+
     }
 }

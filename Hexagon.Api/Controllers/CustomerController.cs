@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Hexagon.Api.Common;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using UserCRUD.Common;
@@ -16,7 +17,6 @@ namespace UserCRUD.Controllers
     public class CustomerController : ControllerBase
     {
         private readonly ICustomerService _customerService;
-        private readonly IJwtService _jwtService;
         public CustomerController(ICustomerService customerService)
         {
             _customerService = customerService;
@@ -54,11 +54,16 @@ namespace UserCRUD.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
             ResponseDTO response = new ResponseDTO();
+
+            // Validação dos parâmetros
+            if (pageNumber < 1) pageNumber = 1;
+            if (pageSize < 1 || pageSize > 100) pageSize = 10;
+
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            Result<List<Customer>> result = await _customerService.GetAll(Int32.Parse(userId));
+            Result<PaginatedResult<Customer>> result = await _customerService.GetAll(Int32.Parse(userId), pageNumber, pageSize);
 
             if (!result.IsSuccess)
             {
@@ -67,9 +72,19 @@ namespace UserCRUD.Controllers
                 return StatusCode(statusCode, response);
             }
 
-            List<CustomerResponseDTO> reponseCustomers = result.Data.Select(c => new CustomerResponseDTO(c)).ToList();
-            response.IsSucess("Customers retrieved successfully.", StatusCodes.Status200OK.ToString(), reponseCustomers);
-            return StatusCode(StatusCodes.Status200OK, response);
+            var paginatedResponse = new
+            {
+                Items = result.Data.Items.Select(c => new CustomerResponseDTO(c)).ToList(),
+                result.Data.TotalCount,
+                result.Data.PageNumber,
+                result.Data.PageSize,
+                result.Data.TotalPages,
+                result.Data.HasPreviousPage,
+                result.Data.HasNextPage
+            };
+
+            response.IsSucess("Customers retrieved successfully.", StatusCodes.Status200OK.ToString(), paginatedResponse);
+            return Ok(response);
         }
 
         [HttpGet("{customerId}")]
