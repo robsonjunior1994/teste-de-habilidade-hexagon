@@ -1,4 +1,4 @@
-using UserCRUD.Services;
+using Hexagon.Api.Domain.Services;
 
 namespace Hexagon.Tests.Services
 {

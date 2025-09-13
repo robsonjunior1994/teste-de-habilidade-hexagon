@@ -1,12 +1,12 @@
+using Hexagon.Api.Domain.Services;
+using Hexagon.Api.Domain.Services.Interfaces;
+using Hexagon.Api.Infrastruture.Data;
+using Hexagon.Api.Infrastruture.Repository;
+using Hexagon.Api.Infrastruture.Repository.Interface;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using UserCRUD.Data;
-using UserCRUD.Repository;
-using UserCRUD.Repository.Interface;
-using UserCRUD.Services;
-using UserCRUD.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 

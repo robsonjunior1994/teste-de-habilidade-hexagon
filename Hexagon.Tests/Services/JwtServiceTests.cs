@@ -1,9 +1,9 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Hexagon.Api.Domain.Models;
+using Hexagon.Api.Domain.Services;
+using Microsoft.Extensions.Configuration;
 using Moq;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using UserCRUD.Models;
-using UserCRUD.Services;
 
 namespace Hexagon.Tests.Services
 {

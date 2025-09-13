@@ -1,10 +1,10 @@
-﻿using Moq;
-using UserCRUD.Common;
+﻿using Hexagon.Api.Domain.Models;
+using Hexagon.Api.Domain.Services;
+using Hexagon.Api.Domain.Services.Interfaces;
+using Hexagon.Api.Infrastruture.Repository.Interface;
+using Hexagon.Api.Presentation.Common;
+using Moq;
 using UserCRUD.DTOs.Request;
-using UserCRUD.Models;
-using UserCRUD.Repository.Interface;
-using UserCRUD.Services;
-using UserCRUD.Services.Interfaces;
 
 namespace Hexagon.Tests.Services
 {
