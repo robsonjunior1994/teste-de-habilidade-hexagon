@@ -41,7 +41,7 @@ Este projeto implementa um **CRUD (Create, Read, Update, Delete)** para a tabela
 
 -----
 
-# Instruções para USO da API, Seguir todos os passos abaixo:
+# Instruções para USO da APLICAÇÂO API e WEB, Seguir todos os passos abaixo:
 
 ### Pré-requisitos para Execução
 
