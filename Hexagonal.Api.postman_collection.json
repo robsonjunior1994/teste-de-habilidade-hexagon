@@ -97,43 +97,25 @@
 			"name": "Customer",
 			"item": [
 				{
-					"name": "Create Customer 1",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{jwt}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n  \"name\": \"Patricia\",\r\n  \"age\": \"33\",\r\n  \"civilState\": \"divorciada\",\r\n  \"cpf\": \"151.051.401-10\",\r\n  \"city\": \"Rio de Janeiro\",\r\n  \"state\": \"RJ\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
+					"name": "Create Customer",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Gerar número de 14 dígitos (entre 10^13 e 10^14 - 1)\r",
+									"const random14Digit = Math.floor(10000000000000 + Math.random() * 90000000000000);\r",
+									"\r",
+									"// Definir como variável de ambiente ou collection\r",
+									"pm.environment.set(\"random_14_digits\", random14Digit.toString());\r",
+									"// ou\r",
+									"pm.collectionVariables.set(\"random_14_digits\", random14Digit.toString());"
+								],
+								"type": "text/javascript",
+								"packages": {}
 							}
-						},
-						"url": {
-							"raw": "{{url}}/customer",
-							"host": [
-								"{{url}}"
-							],
-							"path": [
-								"customer"
-							]
 						}
-					},
-					"response": []
-				},
-				{
-					"name": "Create Customer 2",
+					],
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -149,43 +131,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"name\": \"Beatriz\",\r\n  \"age\": \"33\",\r\n  \"civilState\": \"casada\",\r\n  \"cpf\": \"041.051.401-10\",\r\n  \"city\": \"Rio de Janeiro\",\r\n  \"state\": \"RJ\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{url}}/customer",
-							"host": [
-								"{{url}}"
-							],
-							"path": [
-								"customer"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Create Customer 3",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{jwt}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n  \"name\": \"Ana Cristina\",\r\n  \"age\": \"60\",\r\n  \"civilState\": \"divorciada\",\r\n  \"cpf\": \"151.555.401-21\",\r\n  \"city\": \"Rio de Janeiro\",\r\n  \"state\": \"RJ\"\r\n}",
+							"raw": "{\r\n  \"name\": \"Ana Cristina\",\r\n  \"age\": \"60\",\r\n  \"civilState\": \"divorciada\",\r\n  \"cpf\": \"{{random_14_digits}}\",\r\n  \"city\": \"Rio de Janeiro\",\r\n  \"state\": \"RJ\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -368,6 +314,12 @@
 					"response": []
 				}
 			]
+		}
+	],
+	"variable": [
+		{
+			"key": "random_14_digits",
+			"value": ""
 		}
 	]
 }
