@@ -41,6 +41,8 @@ Este projeto implementa um **CRUD (Create, Read, Update, Delete)** para a tabela
 
 -----
 
+# Instruções para USO da API, Seguir todos os passos abaixo:
+
 ### Pré-requisitos para Execução
 
 Para rodar o projeto localmente, você precisará ter:
