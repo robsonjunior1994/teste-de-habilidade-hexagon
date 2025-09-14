@@ -45,7 +45,7 @@ namespace Hexagon.Tests.Services
                 .ReturnsAsync(user);
 
             _customerRepositoryMock.Setup(r => r.GetByCpfAndUserId(customerDto.Cpf, user.Id))
-                .ReturnsAsync((Customer)null);
+                .ReturnsAsync(default(Customer));
 
             _customerRepositoryMock.Setup(r => r.Create(It.IsAny<Customer>()))
                 .Returns(Task.CompletedTask);
@@ -54,6 +54,7 @@ namespace Hexagon.Tests.Services
             var result = await _customerService.Create(customerDto, userEmail);
 
             // Assert
+            _customerRepositoryMock.Verify(repo => repo.Create(It.IsAny<Customer>()), Times.Exactly(1));
             Assert.True(result.IsSuccess);
             Assert.NotNull(result.Data);
             Assert.Equal(customerDto.Name, result.Data.Name);
@@ -89,6 +90,7 @@ namespace Hexagon.Tests.Services
             var result = await _customerService.Create(customerDto, userEmail);
 
             // Assert
+            _customerRepositoryMock.Verify(repo => repo.Create(It.IsAny<Customer>()), Times.Never);
             Assert.False(result.IsSuccess);
             Assert.Equal(ErrorCode.RESOURCE_ALREADY_EXISTS, result.ErrorCode);
             Assert.Equal("Customer already registered", result.ErrorMessage);
@@ -115,7 +117,7 @@ namespace Hexagon.Tests.Services
                 .ReturnsAsync(user);
 
             _customerRepositoryMock.Setup(r => r.GetByCpfAndUserId(customerDto.Cpf, user.Id))
-                .ReturnsAsync((Customer)null);
+                .ReturnsAsync(default(Customer));
 
             _customerRepositoryMock.Setup(r => r.Create(It.IsAny<Customer>()))
                 .ThrowsAsync(new Exception("Database error"));
@@ -152,6 +154,7 @@ namespace Hexagon.Tests.Services
             var result = await _customerService.GetAll(userId, pageNumber, pageSize);
 
             // Assert
+            _customerRepositoryMock.Verify(repo => repo.GetAll(userId, pageNumber, pageSize), Times.Exactly(1));
             Assert.True(result.IsSuccess);
             Assert.NotNull(result.Data);
             Assert.Equal(2, result.Data.Items.Count);
@@ -179,6 +182,7 @@ namespace Hexagon.Tests.Services
             var result = await _customerService.GetAll(userId, pageNumber, pageSize);
 
             // Assert
+            _customerRepositoryMock.Verify(repo => repo.GetAll(userId, pageNumber, pageSize), Times.Exactly(1));
             Assert.True(result.IsSuccess);
             Assert.NotNull(result.Data);
             Assert.Empty(result.Data.Items);
@@ -221,6 +225,7 @@ namespace Hexagon.Tests.Services
             var result = await _customerService.GetForId(userId, customerId);
 
             // Assert
+            _customerRepositoryMock.Verify(repo => repo.GetForId(userId, customerId), Times.Exactly(1));
             Assert.True(result.IsSuccess);
             Assert.NotNull(result.Data);
             Assert.Equal(customerId, result.Data.Id);
@@ -234,12 +239,13 @@ namespace Hexagon.Tests.Services
             var customerId = 999;
 
             _customerRepositoryMock.Setup(r => r.GetForId(userId, customerId))
-                .ReturnsAsync((Customer)null);
+                .ReturnsAsync(default(Customer));
 
             // Act
             var result = await _customerService.GetForId(userId, customerId);
 
             // Assert
+            _customerRepositoryMock.Verify(repo => repo.GetForId(userId, customerId), Times.Exactly(1));
             Assert.False(result.IsSuccess);
             Assert.Equal(ErrorCode.RESOURCE_NOT_FOUND, result.ErrorCode);
             Assert.Equal("Customer not found.", result.ErrorMessage);
@@ -263,6 +269,7 @@ namespace Hexagon.Tests.Services
             var result = await _customerService.DeleteForId(userId, customerId);
 
             // Assert
+            _customerRepositoryMock.Verify(repo => repo.Delete(It.IsAny<Customer>()), Times.Exactly(1));
             Assert.True(result.IsSuccess);
             Assert.NotNull(result.Data);
             Assert.Equal(customerId, result.Data.Id);
@@ -276,12 +283,13 @@ namespace Hexagon.Tests.Services
             var customerId = 999;
 
             _customerRepositoryMock.Setup(r => r.GetForId(userId, customerId))
-                .ReturnsAsync((Customer)null);
+                .ReturnsAsync(default(Customer));
 
             // Act
             var result = await _customerService.DeleteForId(userId, customerId);
 
             // Assert
+            _customerRepositoryMock.Verify(repo => repo.Delete(It.IsAny<Customer>()), Times.Never);
             Assert.False(result.IsSuccess);
             Assert.Equal(ErrorCode.RESOURCE_NOT_FOUND, result.ErrorCode);
         }
@@ -320,6 +328,7 @@ namespace Hexagon.Tests.Services
             var result = await _customerService.Update(userId, customerId, updateDto);
 
             // Assert
+            _customerRepositoryMock.Verify(repo => repo.Update(It.IsAny<Customer>()), Times.Exactly(1));
             Assert.True(result.IsSuccess);
             Assert.NotNull(result.Data);
             Assert.Equal(updateDto.Name, result.Data.Name);
@@ -336,12 +345,13 @@ namespace Hexagon.Tests.Services
             var updateDto = new CustomerRequestDTO();
 
             _customerRepositoryMock.Setup(r => r.GetForId(userId, customerId))
-                .ReturnsAsync((Customer)null);
+                .ReturnsAsync(default(Customer));
 
             // Act
             var result = await _customerService.Update(userId, customerId, updateDto);
 
             // Assert
+            _customerRepositoryMock.Verify(repo => repo.Update(It.IsAny<Customer>()), Times.Never);
             Assert.False(result.IsSuccess);
             Assert.Equal(ErrorCode.RESOURCE_NOT_FOUND, result.ErrorCode);
         }
