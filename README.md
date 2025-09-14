@@ -89,6 +89,8 @@ cd ../Hexagon.Api
 
 # Execute os comandos de migração (no Package Manager Console do Visual Studio ou similar)
 dotnet ef migrations add InicialMigration --project ../Hexagon.Api --startup-project ../Hexagon.Api --output-dir ../Hexagon.Api/Infrastruture/Data/Migrations
+
+
 dotnet ef database update --project ../Hexagon.Api --startup-project ../Hexagon.Api
 ```
 
