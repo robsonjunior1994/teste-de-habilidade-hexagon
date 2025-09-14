@@ -92,6 +92,11 @@ dotnet ef migrations add InicialMigration --project ../Hexagon.Api --startup-pro
 dotnet ef database update --project ../Hexagon.Api --startup-project ../Hexagon.Api
 ```
 
+```powershell
+# OBS.: Caso tenha algum problema execute o comando:
+dotnet tool install --global dotnet-ef
+```
+
 ### Rodando a Aplicação Web
 
 Para iniciar o projeto web:
