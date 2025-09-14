@@ -74,7 +74,7 @@ namespace Hexagon.Tests.Services
 
             // Assert
             Assert.NotNull(principal);
-            Assert.True(principal.Identity.IsAuthenticated);
+            Assert.True(principal.Identity?.IsAuthenticated);
         }
 
         [Fact]
