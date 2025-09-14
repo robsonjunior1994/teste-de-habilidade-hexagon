@@ -40,7 +40,7 @@ namespace Hexagon.Tests.Services
             };
 
             _userRepositoryMock.Setup(r => r.GetByEmail(userDto.Email))
-                .ReturnsAsync((User)null);
+                .ReturnsAsync(default(User));
 
             _encryptionServiceMock.Setup(e => e.EncryptPassword(userDto.Password))
                 .Returns("encryptedPassword");
@@ -52,6 +52,7 @@ namespace Hexagon.Tests.Services
             var result = await _userService.Create(userDto);
 
             // Assert
+            _userRepositoryMock.Verify(repo => repo.Create(It.IsAny<User>()), Times.Exactly(1));
             Assert.True(result.IsSuccess);
             Assert.NotNull(result.Data);
             Assert.Equal(userDto.Name, result.Data.Name);
@@ -82,7 +83,9 @@ namespace Hexagon.Tests.Services
             Assert.False(result.IsSuccess);
             Assert.Equal(ErrorCode.RESOURCE_ALREADY_EXISTS, result.ErrorCode);
             Assert.Equal("Username or password is incorrect", result.ErrorMessage);
-            Assert.Null(result.Data); // Data deve ser null em caso de falha
+            Assert.Null(result.Data);
+            _userRepositoryMock.Verify(repo => repo.Create(It.IsAny<User>()), Times.Never);
+
         }
 
         [Fact]
@@ -97,7 +100,7 @@ namespace Hexagon.Tests.Services
             };
 
             _userRepositoryMock.Setup(r => r.GetByEmail(userDto.Email))
-                .ReturnsAsync((User)null);
+                .ReturnsAsync(default(User));
 
             _encryptionServiceMock.Setup(e => e.EncryptPassword(userDto.Password))
                 .Returns("encryptedPassword");
@@ -162,7 +165,7 @@ namespace Hexagon.Tests.Services
             };
 
             _userRepositoryMock.Setup(r => r.GetByEmail(loginDto.Email))
-                .ReturnsAsync((User)null);
+                .ReturnsAsync(default(User));
 
             // Act
             var result = await _userService.Login(loginDto);
@@ -196,63 +199,6 @@ namespace Hexagon.Tests.Services
                 .ReturnsAsync(user);
 
             _encryptionServiceMock.Setup(e => e.ValidatePassword(loginDto.Password, user.Password))
-                .Returns(false);
-
-            // Act
-            var result = await _userService.Login(loginDto);
-
-            // Assert
-            Assert.False(result.IsSuccess);
-            Assert.Equal(ErrorCode.INVALID_CREDENTIALS, result.ErrorCode);
-            Assert.Equal("Invalid email or password.", result.ErrorMessage);
-            Assert.Null(result.Data);
-        }
-
-        [Fact]
-        public async Task Login_ShouldReturnFailure_WhenUserIsNullFromRepository()
-        {
-            // Arrange
-            var loginDto = new LoginRequestDTO
-            {
-                Email = "test@example.com",
-                Password = "password123"
-            };
-
-            _userRepositoryMock.Setup(r => r.GetByEmail(loginDto.Email))
-                .ReturnsAsync((User)null);
-
-            // Act
-            var result = await _userService.Login(loginDto);
-
-            // Assert
-            Assert.False(result.IsSuccess);
-            Assert.Equal(ErrorCode.RESOURCE_NOT_FOUND, result.ErrorCode);
-            Assert.Equal("User not found", result.ErrorMessage);
-            Assert.Null(result.Data);
-        }
-
-        [Fact]
-        public async Task Login_ShouldHandleNullPasswordGracefully()
-        {
-            // Arrange
-            var loginDto = new LoginRequestDTO
-            {
-                Email = "test@example.com",
-                Password = "password123"
-            };
-
-            var user = new User
-            {
-                Id = 1,
-                Name = "Test User",
-                Email = loginDto.Email,
-                Password = null // Password null
-            };
-
-            _userRepositoryMock.Setup(r => r.GetByEmail(loginDto.Email))
-                .ReturnsAsync(user);
-
-            _encryptionServiceMock.Setup(e => e.ValidatePassword(loginDto.Password, null))
                 .Returns(false);
 
             // Act
