@@ -1,9 +1,9 @@
-## Projeto CRUD de Usuário: Um Guia Detalhado
+# Projeto CRUD: Um Guia Detalhado
 Link do desafio: [Link PRIVADO](https://drive.google.com/file/d/1ebhn52BzlPTXM2EndGbx0PhWrwvhj3dp/view?usp=drive_link)
 
 Este projeto implementa um **CRUD (Create, Read, Update, Delete)** para a tabela de customer, seguindo uma arquitetura de três camadas e aderindo aos princípios **SOLID** para garantir manutenibilidade e escalabilidade.
 
-## Testando a Aplicação Web
+# Testando a Aplicação Web
 
 <details>
 <summary>Image do Sistema</summary>
@@ -36,14 +36,14 @@ Este projeto implementa um **CRUD (Create, Read, Update, Delete)** para a tabela
 
 </details>
 
-
-
-
 -----
 
 # Instruções para USO da APLICAÇÂO API e WEB, Seguir todos os passos abaixo:
 
-### Pré-requisitos para Execução
+<details>
+<summary> Clique aqui para mais informações: </summary>
+
+ ### Pré-requisitos para Execução
 
 Para rodar o projeto localmente, você precisará ter:
 
@@ -140,7 +140,12 @@ Clique em "Start"
 
 -----
 
+</details>
+
+
 # Relatório de desenvolvimento
+<details>
+<summary> Clique aqui para mais informações </summary>
 
 ## Arquitetura e Princípios de Projeto
 
@@ -212,3 +217,6 @@ Um arquivo Postman [LINK do arquivo](https://github.com/robsonjunior1994/teste-d
 Este projeto demonstra a implementação de um sistema CRUD de usuário utilizando uma arquitetura de três camadas e princípios SOLID, garantindo um código limpo, organizado e fácil de manter. A utilização de Docker para o banco de dados e a construção do frontend com Vite e React proporcionam uma experiência de desenvolvimento moderna e eficiente. Sinta-se à vontade para explorar, modificar e expandir o projeto conforme suas necessidades!
 
 Meu maior conhecimento é no backend, por isso o frontend está simples, mas funcional. Caso tenha dúvidas ou sugestões, estou aberto a feedbacks!
+ 
+</details>
+
